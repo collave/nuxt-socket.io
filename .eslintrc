@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "@nuxtjs/eslint-config-typescript"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "off"
+    ],
+    "@typescript-eslint/no-this-alias": "off",
+    "func-call-spacing": "off",
+    "vue/multi-word-component-names": "off",
+    "comma-dangle": "off",
+    "space-before-function-paren": "off",
+    "arrow-parens": "off",
+    "new-cap": "warn",
+    "no-use-before-define": "warn",
+    "curly": "off",
+    "import/first": "warn",
+    "symbol-description": "warn",
+    "n/no-callback-literal": "off"
+  }
+}

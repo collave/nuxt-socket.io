@@ -1,0 +1,13 @@
+{
+  "plugins": ["@prettier/plugin-pug"],
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 120,
+  "arrowParens": "avoid",
+  "pugAttributeSeparator": "as-needed",
+  "pugClosingBracketPosition": "last-line",
+  "pugSingleQuote": false,
+  "pugSingleFileComponentIndentation": false,
+  "pugFramework": "vue",
+  "pugEmptyAttributes": "none"
+}
