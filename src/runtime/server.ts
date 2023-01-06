@@ -7,22 +7,22 @@ declare global {
   var __io: SocketServer
 }
 
-export type SocketMiddleware<T> = (socket: Socket, server: SocketServer) => T | Promise<T>;
+export type SocketMiddleware<T> = (socket: Socket, server: SocketServer) => T | Promise<T>
 
 type SocketImport = {
+  default: SocketMiddleware<void | Record<string, Function>>
   initialize?: (server: SocketServer) => void | Promise<void>
   middlewares?: SocketMiddleware<void>[]
-  default: SocketMiddleware<void | Record<string, Function>>
 }
 
 export function createIOHandler(imports: Record<string, SocketImport>, serverOptions: Partial<ServerOptions>) {
-  return eventHandler(async (event) => {
+  return eventHandler(async event => {
     if (!globalThis.__io) {
       const httpServer = (event.node.req.socket as any).server as Server
       const io = new SocketServer(httpServer, serverOptions)
       for (const [key, { initialize, middlewares, default: handler }] of Object.entries(imports)) {
         await initialize?.(io)
-        ;(key === 'index' ? io : io.of(key)).on('connection', (socket) => {
+        ;(key === 'index' ? io : io.of(key)).on('connection', socket => {
           const fn = async () => {
             for (const middleware of middlewares || []) {
               await middleware?.(socket, io)

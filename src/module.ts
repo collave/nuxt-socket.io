@@ -40,30 +40,29 @@ function toName(file: string) {
 }
 
 function createServerMiddleware(nuxt: Nuxt, options?: ServerOptions) {
+  const middlewarePath = resolve(fileURLToPath(new URL('./runtime', import.meta.url)), 'server.mjs').replaceAll(
+    '\\',
+    '/'
+  )
+  function getFilePath(file: string) {
+    return relative(nuxt.options.buildDir, file).replace('.ts', '')
+  }
   addTemplate({
-    filename: 'io-handler.ts',
+    filename: 'socket-io.ts',
     write: true,
-    getContents(opts) {
+    getContents() {
       return `
-          import { createIOHandler } from 'file://${resolve(
-            fileURLToPath(new URL('./runtime', import.meta.url)),
-            'server.mjs'
-          ).replaceAll('\\', '/')}';
-          ${[...files]
-            .map(
-              (file, index) =>
-                `import * as ${toName(file)} from '${relative(nuxt.options.buildDir, file).replace('.ts', '')}'`
-            )
-            .join('\n')}
+          import { createIOHandler } from 'file://${middlewarePath}';
+          ${[...files].map(file => `import * as ${toName(file)} from '${getFilePath(file)}'`).join('\n')}
           export default createIOHandler({
-            ${[...files].map((file, index) => `${toName(file)}`).join(',\n')}
+            ${[...files].map(file => `${toName(file)}`).join(',\n')}
           }, ${JSON.stringify(options || {})})
         `
     },
   })
   addServerHandler({
     middleware: true,
-    handler: resolve(nuxt.options.buildDir, 'io-handler.ts'),
+    handler: resolve(nuxt.options.buildDir, 'socket-io.ts'),
   })
 }
 
