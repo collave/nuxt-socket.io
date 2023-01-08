@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SocketOptions } from 'socket.io-client'
-import { provide, shallowRef, unref, useNuxtApp, watch } from '#imports'
+import { provide, shallowRef, useNuxtApp, watch } from '#imports'
 
 const props = defineProps<{
   url?: string
