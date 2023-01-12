@@ -20,18 +20,31 @@ const emit = defineEmits<{
 const socket = computed(() => props.socket || unref(inject('socket-io')))
 const { waiting, response, error, execute } = useSocketIOCall(socket)
 
+function callExecute() {
+  if (!props.name) return
+  try {
+    return execute(props.name, ...(props.args || []))
+  } catch (e) {
+    //
+  }
+}
+
 watch(
-  [socket, () => props.name, () => props.args],
-  async ([socket, name, args]) => {
-    if (!socket || props.manual) return
+  [socket, () => props.name],
+  async ([socket, name]) => {
+    if (!socket || !name || props.manual) return
     try {
-      await execute(name, ...(args || []))
+      await execute(name, ...(props.args || []))
     } catch (e) {
       //
     }
   },
   { immediate: true }
 )
+
+watch(() => props.args, () => {
+  callExecute()
+})
 
 watch(waiting as Ref<boolean>, waiting => {
   emit('waiting', waiting)
@@ -49,14 +62,6 @@ watch(response, response => {
 watch(error, error => {
   emit('error', error)
 })
-
-function callExecute() {
-  try {
-    return execute(props.name, ...(props.args || []))
-  } catch (e) {
-    //
-  }
-}
 
 defineExpose({ execute: callExecute })
 

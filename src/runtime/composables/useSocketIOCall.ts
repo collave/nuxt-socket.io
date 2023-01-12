@@ -7,8 +7,8 @@ export function useSocketIOCall(socket: Socket | Ref<Socket>) {
   const response = shallowRef()
   const error = shallowRef()
 
-  function request(name: string | Ref<string>, ...args: (any | Ref)[]) {
-    return new Promise((resolve, reject) => {
+  function request<T>(name: string | Ref<string>, ...args: (any | Ref)[]): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
       unref(socket).emit(
         `rpc:${unref(name)}`,
         ...[
@@ -24,11 +24,11 @@ export function useSocketIOCall(socket: Socket | Ref<Socket>) {
     })
   }
 
-  async function execute(name: string | Ref<string>, ...args: (any | Ref)[]) {
+  async function execute<T>(name: string | Ref<string>, ...args: (any | Ref)[]): Promise<T> {
     try {
       waiting.value = true
       error.value = null
-      const result = await request(name, ...args)
+      const result = await request<T>(name, ...args)
       response.value = result
       return result
     } catch (e: any) {
